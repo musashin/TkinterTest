@@ -6,6 +6,34 @@ __pad_x__ = 5
 __pad_y__ = 5
 
 
+class SignalColumnOrderSelect():
+
+    def __init__(self, signal_list):
+        self.signal_list = signal_list
+        popup = Tk()
+        popup.wm_title("Select Column")
+        listbox = Listbox(popup)
+        listbox.pack()
+
+        for item in self.signal_list.treeview['columns']:
+            listbox.insert(END, item)
+
+        up_btn = ttk.Button(popup, text="Up", command = self.up_current__column)
+        up_btn.pack()
+
+        dn_btn = ttk.Button(popup, text="Dn", command = self.dn_current_column())
+        dn_btn.pack()
+
+        conf_btn = ttk.Button(popup, text="Okay", command = popup.destroy)
+        conf_btn.pack()
+        popup.mainloop()
+
+    def up_current__column(self):
+        pass
+
+    def dn_current_column(self):
+        pass
+
 class SignalList():
     def __init__(self, parent, heading_list, signal_list):
         t=ttk.Treeview(parent)
@@ -35,6 +63,8 @@ class SignalList():
     def set_columns(self):
         self.treeview["displaycolumns"]=("first","second")
 
+
+
 class Browser(Frame):
     def __init__(self, parent=None):
         Frame.__init__(self)
@@ -46,6 +76,9 @@ class Browser(Frame):
 
         self.signal_list = self.create_message_list()
 
+        self.create_menu(parent)
+
+    def create_menu(self, parent):
         menu = Menu(parent)
         root.config(menu=menu)
         filemenu = Menu(menu)
@@ -53,26 +86,15 @@ class Browser(Frame):
         filemenu.add_command(label="Open...", command=None)
         filemenu.add_separator()
         filemenu.add_command(label="Exit", command=root.quit)
-
         viewmenu = Menu(menu)
         menu.add_cascade(label="View", menu=viewmenu)
         viewmenu.add_command(label="columns", command=self.select_column)
 
     def select_column(self):
         self.signal_list.set_columns()
-        popup = Tk()
-        popup.wm_title("Select Column")
-        listbox = Listbox(popup)
-        listbox.pack()
 
-        for item in self.signal_list.treeview['columns']:
-            listbox.insert(END, item)
+        SignalColumnOrderSelect(self.signal_list)
 
-        label = ttk.Label(popup, text="hello")
-        label.pack(side="top", fill="x", pady=10)
-        B1 = ttk.Button(popup, text="Okay", command = popup.destroy)
-        B1.pack()
-        popup.mainloop()
 
     def create_message_list(self):
         fm2 = Frame(self.master)
