@@ -6,6 +6,30 @@ __pad_x__ = 5
 __pad_y__ = 5
 
 
+class SignalList():
+    def __init__(self, parent, heading_list,signal_list):
+        t=ttk.Treeview(parent)
+        t["columns"]=heading_list
+
+        ysb = ttk.Scrollbar(orient=VERTICAL, command= t.yview)
+        xsb = ttk.Scrollbar(orient=HORIZONTAL, command= t.xview)
+        t['yscroll'] = ysb.set
+        t['xscroll'] = xsb.set
+
+        for col in heading_list:
+            t.heading(col, text=col)
+
+        for item in signal_list:
+         t.insert("",'end',values=item)
+
+        t.tag_configure("ttk")
+        t["displaycolumns"]=("second","first")
+        t["show"]=('headings')
+
+        t.pack(side=LEFT,fill=BOTH,expand=YES)
+        ysb.pack(side=LEFT, fill=Y)
+        #xsb.pack(side=TOP)
+
 class Browser(Frame):
     def __init__(self, parent=None):
         Frame.__init__(self)
@@ -19,18 +43,12 @@ class Browser(Frame):
 
     def create_message_list(self):
         fm2 = Frame(self.master)
-        t=ttk.Treeview(fm2)
-        t["columns"]=("first","second")
-        t.column("first")
-        t.column("second")
-        t.heading("first",text="first column")
-        t.heading("second",text="second column")
-        t.insert("",'end',text="directory 1",values=("file 1 A","file 1 B"))
-        t.insert("",'end',"dir2",text="directory 2",values=("file 1 A","file 1 B"))
-        t.tag_configure("ttk")
-        t["displaycolumns"]=("second","first")
-        t["show"]=('headings')
-        t.pack(fill=BOTH,expand=YES)
+
+        test = list()
+        for i in range(0,30):
+            test.append(('toto {!s}'.format(i),'titi {!s}'.format(i)))
+
+        signalList = SignalList(self.master, ("first", "second"), test)
         fm2.pack(side=BOTTOM, expand=YES, fill=BOTH)
 
     def create_equipment_labels(self, frame):
