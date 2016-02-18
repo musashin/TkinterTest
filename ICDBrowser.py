@@ -7,7 +7,7 @@ __pad_y__ = 5
 
 
 class SignalList():
-    def __init__(self, parent, heading_list,signal_list):
+    def __init__(self, parent, heading_list, signal_list):
         t=ttk.Treeview(parent)
         t["columns"]=heading_list
 
@@ -30,6 +30,11 @@ class SignalList():
         ysb.pack(side=LEFT, fill=Y)
         #xsb.pack(side=TOP)
 
+        self.treeview  =t
+
+    def set_columns(self):
+        self.treeview["displaycolumns"]=("first","second")
+
 class Browser(Frame):
     def __init__(self, parent=None):
         Frame.__init__(self)
@@ -39,7 +44,35 @@ class Browser(Frame):
 
         self.create_equipment_labels(self.master)
 
-        self.create_message_list()
+        self.signal_list = self.create_message_list()
+
+        menu = Menu(parent)
+        root.config(menu=menu)
+        filemenu = Menu(menu)
+        menu.add_cascade(label="File", menu=filemenu)
+        filemenu.add_command(label="Open...", command=None)
+        filemenu.add_separator()
+        filemenu.add_command(label="Exit", command=root.quit)
+
+        viewmenu = Menu(menu)
+        menu.add_cascade(label="View", menu=viewmenu)
+        viewmenu.add_command(label="columns", command=self.select_column)
+
+    def select_column(self):
+        self.signal_list.set_columns()
+        popup = Tk()
+        popup.wm_title("Select Column")
+        listbox = Listbox(popup)
+        listbox.pack()
+
+        for item in self.signal_list.treeview['columns']:
+            listbox.insert(END, item)
+
+        label = ttk.Label(popup, text="hello")
+        label.pack(side="top", fill="x", pady=10)
+        B1 = ttk.Button(popup, text="Okay", command = popup.destroy)
+        B1.pack()
+        popup.mainloop()
 
     def create_message_list(self):
         fm2 = Frame(self.master)
@@ -50,6 +83,8 @@ class Browser(Frame):
 
         signalList = SignalList(self.master, ("first", "second"), test)
         fm2.pack(side=BOTTOM, expand=YES, fill=BOTH)
+
+        return signalList
 
     def create_equipment_labels(self, frame):
 
